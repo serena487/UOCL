@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중어이 기말 완전판</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --surface2: #f2f1ee;
+    --border: rgba(0,0,0,0.10);
+    --border-md: rgba(0,0,0,0.18);
+    --text: #1a1917;
+    --text-2: #6b6a66;
+    --text-3: #a09e9a;
+    --ok: #1d7a4e;
+    --ok-bg: #eaf6f0;
+    --ok-border: #9fd6bc;
+    --ng: #b93232;
+    --ng-bg: #fdf0f0;
+    --ng-border: #f5b8b8;
+    --accent: #3a56d4;
+    --accent-bg: #eef1fc;
+    --warn: #b96a00;
+    --warn-bg: #fdf4e7;
+    --radius-sm: 6px;
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── header ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-title { font-size: 15px; font-weight: 700; letter-spacing: -.02em; }
+  .header-sub { font-size: 12px; color: var(--text-2); margin-left: 8px; }
+
+  /* ── tabs ── */
+  .tab-row {
+    display: flex;
+    gap: 4px;
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 3px;
+  }
+  .tab {
+    padding: 5px 16px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--text-2);
+    font-weight: 500;
+    transition: background .15s, color .15s;
+  }
+  .tab.active {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  /* ── layout ── */
+  .main { max-width: 720px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+  /* ── stats bar ── */
+  .stats { display: flex; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    min-width: 80px;
+  }
+  .stat-n { font-size: 22px; font-weight: 700; line-height: 1.2; }
+  .stat-n.ok { color: var(--ok); }
+  .stat-n.ng { color: var(--ng); }
+  .stat-l { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+
+  /* ── action row ── */
+  .action-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+  .btn {
+    padding: 7px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-md);
+    background: var(--surface);
+    font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 500;
+    transition: background .12s;
+  }
+  .btn:hover { background: var(--surface2); }
+  .btn-danger { color: var(--ng); border-color: var(--ng-border); }
+  .btn-danger:hover { background: var(--ng-bg); }
+
+  /* ── filter row ── */
+  .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+  .filter-btn {
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border-md);
+    background: transparent;
+    font-size: 12px;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: all .12s;
+  }
+  .filter-btn.on {
+    background: var(--text);
+    color: #fff;
+    border-color: var(--text);
+  }
+
+  /* ── section label ── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-3);
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    margin: 2rem 0 0.75rem;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── question card ── */
+  .qcard {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    transition: border-color .2s;
+  }
+  .qcard.correct { border-color: var(--ok-border); background: var(--ok-bg); }
+  .qcard.wrong   { border-color: var(--ng-border); }
+
+  .qmeta { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+  .qnum  { font-size: 11px; color: var(--text-3); }
+  .badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    letter-spacing: .02em;
+  }
+  .badge-blank { background: var(--accent-bg); color: var(--accent); }
+  .badge-essay { background: var(--warn-bg); color: var(--warn); }
+
+  .q-label {
+    font-size: 12px;
+    color: var(--text-2);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .qtext { font-size: 14px; line-height: 2; margin-bottom: 10px; }
+
+  /* ── blank input ── */
+  .blank-wrap { display: inline-block; vertical-align: bottom; margin: 0 2px; }
+  .blank-wrap input {
+    border: none;
+    border-bottom: 2px solid var(--border-md);
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    color: var(--text);
+    text-align: center;
+    font-family: 'Noto Sans KR', sans-serif;
+    padding: 0 4px;
+    min-width: 76px;
+    transition: border-color .15s;
+  }
+  .blank-wrap input:focus { border-bottom-color: var(--accent); }
+  .blank-wrap input.ok  { color: var(--ok);  border-bottom-color: var(--ok); }
+  .blank-wrap input.ng  { color: var(--ng);  border-bottom-color: var(--ng); }
+
+  /* ── essay textarea ── */
+  .essay-area {
+    width: 100%;
+    border: 1px solid var(--border-md);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--text);
+    background: var(--surface2);
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.7;
+    margin-bottom: 10px;
+    transition: border-color .15s, background .15s;
+  }
+  .essay-area:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+
+  /* ── answer reveal ── */
+  .ans-box {
+    display: none;
+    background: var(--ok-bg);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--ok);
+    margin-top: 8px;
+    line-height: 1.7;
+    border-left: 3px solid var(--ok-border);
+  }
+  .ans-box.show { display: block; }
+
+  .essay-ans-box {
+    display: none;
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--text-2);
+    margin-top: 6px;
+    line-height: 1.8;
+    border-left: 3px solid var(--ok-border);
+  }
+  .essay-ans-box.show { display: block; }
+  .essay-ans-box strong { font-size: 11px; color: var(--text-3); display: block; margin-bottom: 5px; letter-spacing: .04em; }
+
+  /* ── bottom row ── */
+  .bottom-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+  .btn-check {
+    padding: 5px 14px;
+    font-size: 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-md);
+    background: transparent;
+    color: var(--text-2);
+    cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+    transition: background .12s;
+  }
+  .btn-check:hover { background: var(--surface2); }
+  .fb       { font-size: 12px; font-weight: 500; }
+  .fb.ok    { color: var(--ok); }
+  .fb.ng    { color: var(--ng); }
+
+  /* ── wrong note ── */
+  .wn-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.25rem;
+  }
+  .wn-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .wn-title { font-size: 15px; font-weight: 700; }
+  .wn-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--ng-bg);
+    color: var(--ng);
+    font-weight: 700;
+  }
+  .wn-item {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .wn-item:last-child { border-bottom: none; }
+  .wn-q   { font-size: 12px; color: var(--text-3); margin-bottom: 4px; }
+  .wn-row { display: flex; gap: 16px; font-size: 13px; font-weight: 500; }
+  .wn-wrong { color: var(--ng); }
+  .wn-right { color: var(--ok); }
+  .empty  { font-size: 13px; color: var(--text-3); padding: 8px 0; }
+
+  /* ── hidden ── */
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div style="display:flex;align-items:center">
+    <span class="header-title">중어이 기말 완전판</span>
+    <span class="header-sub">7강–13강</span>
+  </div>
+  <div class="tab-row">
+    <button class="tab active" onclick="switchTab('blank',this)">빈칸형</button>
+    <button class="tab" onclick="switchTab('essay',this)">서술형</button>
+    <button class="tab" onclick="switchTab('wrong',this)">오답 노트</button>
+  </div>
+</header>
+
+<main class="main">
+  <div class="stats">
+    <div class="stat"><div class="stat-n ok" id="sc-ok">0</div><div class="stat-l">정답</div></div>
+    <div class="stat"><div class="stat-n ng" id="sc-ng">0</div><div class="stat-l">오답</div></div>
+    <div class="stat"><div class="stat-n" id="sc-tot">0</div><div class="stat-l">전체 빈칸</div></div>
+    <div class="stat"><div class="stat-n" id="sc-wn">0</div><div class="stat-l">오답 노트</div></div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn" id="btn-all" onclick="checkAllVisible()">전체 채점</button>
+    <button class="btn" onclick="resetVisible()">초기화</button>
+    <button class="btn" onclick="showAllAns()">정답 모두 보기</button>
+  </div>
+
+  <div class="filter-row" id="filter-row">
+    <button class="filter-btn on" onclick="filterSection('all',this)">전체</button>
+    <button class="filter-btn" onclick="filterSection('7강',this)">7강</button>
+    <button class="filter-btn" onclick="filterSection('8강',this)">8강</button>
+    <button class="filter-btn" onclick="filterSection('9강',this)">9강</button>
+    <button class="filter-btn" onclick="filterSection('10강',this)">10강</button>
+    <button class="filter-btn" onclick="filterSection('11강',this)">11강</button>
+    <button class="filter-btn" onclick="filterSection('12강',this)">12강</button>
+    <button class="filter-btn" onclick="filterSection('13강',this)">13강</button>
+  </div>
+
+  <div id="page-blank"></div>
+  <div id="page-essay" class="hidden"></div>
+
+  <div id="page-wrong" class="hidden">
+    <div class="wn-wrap">
+      <div class="wn-head">
+        <span class="wn-title">오답 노트</span>
+        <span class="wn-badge" id="wn-cnt">0</span>
+      </div>
+      <div id="wn-body"><div class="empty">아직 채점된 오답이 없어요.</div></div>
+      <button class="btn btn-danger" style="margin-top:12px" onclick="clearWN()">오답 초기화</button>
+    </div>
+  </div>
+</main>
+
+<script>
+const BLANKS=[
+  {id:'b1',sec:'7강',label:'단어 어휘적 정의 — 완정·정형·최소',
+   tpl:'어휘적 정의에서 \'완정\'에 근거하여 단어를 <b data-id="b1_a">(a)</b>와/과 구별하고, \'정형\'에 근거하여 <b data-id="b1_b">(b)</b>와 구별하며, \'최소\'에 근거하여 <b data-id="b1_c">(c)</b>와 구별한다.',
+   blanks:[{id:'b1_a',ans:'단어의 구성 성분|구성 성분',lbl:'(a) 완정→'},{id:'b1_b',ans:'자유구',lbl:'(b) 정형→'},{id:'b1_c',ans:'고정구',lbl:'(c) 최소→'}]},
+  {id:'b2',sec:'7강',label:'형태소 — 자립·반자립·의존',
+   tpl:'단독으로 낱말이 되는 형태소 → <b data-id="b2_a">(a)</b>. 결합 시 위치이동 자유 → <b data-id="b2_b">(b)</b>. 특정 위치에만 결합 → <b data-id="b2_c">(c)</b>.',
+   blanks:[{id:'b2_a',ans:'자립형태소|성사형태소',lbl:'(a)'},{id:'b2_b',ans:'반자립형태소|어근형태소',lbl:'(b)'},{id:'b2_c',ans:'의존형태소|비자립형태소',lbl:'(c)'}]},
+  {id:'b3',sec:'7강',label:'형태소 — 실질·형식',
+   tpl:'실질적 의미 있는 형태소 → <b data-id="b3_a">(a)</b>(위치이동 자유). 형식만 있는 형태소 → <b data-id="b3_b">(b)</b>(위치 고정).',
+   blanks:[{id:'b3_a',ans:'실질형태소',lbl:'(a)'},{id:'b3_b',ans:'형식형태소',lbl:'(b)'}]},
+  {id:'b4',sec:'7강',label:'형태변화 유무 — 어간·어미·형태사',
+   tpl:'형태가 변하지 않는 부분 → <b data-id="b4_a">(a)</b>. 형태변화하는 부분 → <b data-id="b4_b">(b)</b>. 중국어에서는 了·们 등을 어미 대신 <b data-id="b4_c">(c)</b>라 부른다.',
+   blanks:[{id:'b4_a',ans:'어간형태소',lbl:'(a)'},{id:'b4_b',ans:'어미형태소',lbl:'(b)'},{id:'b4_c',ans:'형태사',lbl:'(c)'}]},
+  {id:'b5',sec:'7강',label:'중국어 굴절의 확장 방향',
+   tpl:'인도유럽어는 굴절이 단어 <b data-id="b5_a">(a)</b>에서 이루어지지만, 중국어는 단어 <b data-id="b5_b">(b)</b>으로 확장된다.',
+   blanks:[{id:'b5_a',ans:'안|내부',lbl:'(a) 인도유럽어'},{id:'b5_b',ans:'밖|외부',lbl:'(b) 중국어'}]},
+  {id:'b6',sec:'8강',label:'구사법(构词法) vs 구형법(构形法)',
+   tpl:'<b data-id="b6_a">(a)</b>은 형태소로부터 단어를 구성하는 법칙(단어 내부구조). <b data-id="b6_b">(b)</b>은 단어의 형태변화(굴절)법으로 성·수·격·시제·상 등 문법관계를 나타낸다.',
+   blanks:[{id:'b6_a',ans:'구사법|构词法',lbl:'(a)'},{id:'b6_b',ans:'구형법|构形法',lbl:'(b)'}]},
+  {id:'b7',sec:'8강',label:'병렬식 세 종류',
+   tpl:'동의 연합(의미 유사): 休息·喜欢. 대칭 연합(의미 상반): <b data-id="b7_a">(a 예)</b>. 평행 연합(유사어): <b data-id="b7_b">(b 예)</b>.',
+   blanks:[{id:'b7_a',ans:'是非|正反',lbl:'(a) 대칭 예'},{id:'b7_b',ans:'高达|安全',lbl:'(b) 평행 예'}]},
+  {id:'b8',sec:'8강',label:'복합어 내부구조 7가지 (빈칸 3개)',
+   tpl:'연합식·평정식·<b data-id="b8_a">(a)</b>·주술식·<b data-id="b8_b">(b)</b>·중첩식·<b data-id="b8_c">(c)</b>',
+   blanks:[{id:'b8_a',ans:'술보식|후보식',lbl:'(a)'},{id:'b8_b',ans:'동목식|술목식',lbl:'(b)'},{id:'b8_c',ans:'축합식',lbl:'(c)'}]},
+  {id:'b9',sec:'8강',label:'축합식 4종류',
+   tpl:'일부 생략 → <b data-id="b9_a">(a)</b>. 유관 형태소 선택 결합 → <b data-id="b9_b">(b)</b>. 숫자로 내용 축약 → <b data-id="b9_c">(c)</b>. 다른 형태소로 전칭 대신 → <b data-id="b9_d">(d)</b>.',
+   blanks:[{id:'b9_a',ans:'생략',lbl:'(a)'},{id:'b9_b',ans:'축약',lbl:'(b)'},{id:'b9_c',ans:'총괄',lbl:'(c)'},{id:'b9_d',ans:'간대',lbl:'(d)'}]},
+  {id:'b10',sec:'9강',label:'품사 분류 기준 3가지',
+   tpl:'① 문장 내 어떤 <b data-id="b10_a">(a)</b>을 충당하는가. ② 어떤 다른 단어와 <b data-id="b10_b">(b)</b>할 수 있는가. ③ <b data-id="b10_c">(c)</b>와 의미.',
+   blanks:[{id:'b10_a',ans:'문장 성분|문장성분',lbl:'(a)'},{id:'b10_b',ans:'결합',lbl:'(b)'},{id:'b10_c',ans:'형태변화',lbl:'(c)'}]},
+  {id:'b11',sec:'9강',label:'품사 분류가 어려운 두 가지 이유',
+   tpl:'① 단어의 <b data-id="b11_a">(a)</b>와 <b data-id="b11_b">(b)</b>가 없음. ② 품사와 <b data-id="b11_c">(c)</b> 간 대응이 一对多.',
+   blanks:[{id:'b11_a',ans:'형태변화',lbl:'(a)'},{id:'b11_b',ans:'어형변화',lbl:'(b)'},{id:'b11_c',ans:'문장성분',lbl:'(c)'}]},
+  {id:'b12',sec:'9강',label:'겸류(兼类) — 麻烦 품사·용어',
+   tpl:'①很麻烦 → <b data-id="b12_a">(a)</b>. ②麻烦别人 → <b data-id="b12_b">(b)</b>. ③带来麻烦 → <b data-id="b12_c">(c)</b>. 이처럼 2개 이상 품사를 겸하는 것 → <b data-id="b12_d">(d)</b>.',
+   blanks:[{id:'b12_a',ans:'형용사',lbl:'(a)'},{id:'b12_b',ans:'동사',lbl:'(b)'},{id:'b12_c',ans:'명사',lbl:'(c)'},{id:'b12_d',ans:'겸류|兼类',lbl:'(d)'}]},
+  {id:'b13',sec:'9강',label:'명사술어문 가능 의미 범주',
+   tpl:'날씨·출신지·<b data-id="b13_a">(a)</b>·외모·사물 특징, 시간·날짜·요일·<b data-id="b13_b">(b)</b>·키·체중·가격 등.',
+   blanks:[{id:'b13_a',ans:'직업',lbl:'(a)'},{id:'b13_b',ans:'나이',lbl:'(b)'}]},
+  {id:'b14',sec:'9강',label:'접속사 — 양보·가정·조건',
+   tpl:'양보: 虽然·尽管·<b data-id="b14_a">(a)</b>. 가정: <b data-id="b14_b">(b)</b>·要是·假如·倘若. 조건: 只要·<b data-id="b14_c">(c)</b>·无论·除非.',
+   blanks:[{id:'b14_a',ans:'即使|固然|就是|哪怕',lbl:'(a) 양보'},{id:'b14_b',ans:'如果',lbl:'(b) 가정 대표'},{id:'b14_c',ans:'只有',lbl:'(c) 조건'}]},
+  {id:'b15',sec:'9강',label:'접속사 — 연합관계 분류',
+   tpl:'병렬: 和·跟·同·<b data-id="b15_a">(a)</b>·以及. 점진: 不但·不仅·<b data-id="b15_b">(b)</b>·并且·甚至. 승접: <b data-id="b15_c">(c)</b>·于是.',
+   blanks:[{id:'b15_a',ans:'与|及',lbl:'(a) 병렬'},{id:'b15_b',ans:'而且|并',lbl:'(b) 점진'},{id:'b15_c',ans:'然后',lbl:'(c) 승접'}]},
+  {id:'b16',sec:'10강',label:'谓语 vs 述语 층차 분석',
+   tpl:'谓语와 述语는 같은 층위 개념이 <b data-id="b16_a">(a)</b>. 谓语는 <b data-id="b16_b">(b)</b>를 전제, 述语는 <b data-id="b16_c">(c)</b>를 전제로 한다. 谓语는 述语를 <b data-id="b16_d">(d)</b>한다.',
+   blanks:[{id:'b16_a',ans:'아니다|아님',lbl:'(a)'},{id:'b16_b',ans:'주어',lbl:'(b) 谓语'},{id:'b16_c',ans:'보어|빈어',lbl:'(c) 述语'},{id:'b16_d',ans:'포함',lbl:'(d)'}]},
+  {id:'b17',sec:'10강',label:'주술술어문 대주어·소주어 의미관계',
+   tpl:'我什么都不想吃: 大主语 我 → <b data-id="b17_a">(a)</b>, 小主语 什么 → <b data-id="b17_b">(b)</b>. 서방 학계에서는 <b data-id="b17_c">(c)</b>과 <b data-id="b17_d">(d)</b>으로 설명.',
+   blanks:[{id:'b17_a',ans:'시사',lbl:'(a) 대주어'},{id:'b17_b',ans:'수사',lbl:'(b) 소주어'},{id:'b17_c',ans:'Topic|화제',lbl:'(c)'},{id:'b17_d',ans:'Comment|설명부',lbl:'(d)'}]},
+  {id:'b18',sec:'10강',label:'보어 vs 빈어 구분법',
+   tpl:'보어 → <b data-id="b18_a">(a)</b>에 대한 대답. 빈어 → <b data-id="b18_b">(b)</b>에 대한 대답. 술어 뒤 수량구 있을 때 <b data-id="b18_c">(c)</b>자문 전환 가능 여부로도 구분.',
+   blanks:[{id:'b18_a',ans:'怎么样|어떻게',lbl:'(a) 보어'},{id:'b18_b',ans:'什么，谁|무엇/누구',lbl:'(b) 빈어'},{id:'b18_c',ans:'把',lbl:'(c)'}]},
+  {id:'b19',sec:'10강',label:'시량보어 — 목적어 종류별 어순',
+   tpl:'일반명사: 동사+시량보어+<b data-id="b19_a">(a)</b>+목적어. 인칭대사: 동사+<b data-id="b19_b">(b)</b>+시량보어. 인명/지명: 동사+시량보어+(的)+목적어.',
+   blanks:[{id:'b19_a',ans:'(的)|的',lbl:'(a)'},{id:'b19_b',ans:'목적어',lbl:'(b)'}]},
+  {id:'b20',sec:'10강',label:'동량보어 — 목적어 종류별 어순',
+   tpl:'일반 사물: 동사+동량보어+<b data-id="b20_a">(a)</b>. 인칭대사: 동사+<b data-id="b20_b">(b)</b>+동량보어.',
+   blanks:[{id:'b20_a',ans:'목적어',lbl:'(a) 사물'},{id:'b20_b',ans:'목적어',lbl:'(b) 인칭대사'}]},
+  {id:'b21',sec:'10강',label:'방향보어 확장의미 5가지',
+   tpl:'上→<b data-id="b21_a">(a)</b>. 下→<b data-id="b21_b">(b)</b>. 出→<b data-id="b21_c">(c)</b>. 过来→<b data-id="b21_d">(d)</b>. 起来→<b data-id="b21_e">(e)</b>.',
+   blanks:[{id:'b21_a',ans:'목표달성|접촉부착|시작지속',lbl:'上'},{id:'b21_b',ans:'분리|남겨짐',lbl:'下'},{id:'b21_c',ans:'인식|무→유',lbl:'出'},{id:'b21_d',ans:'비정상→정상',lbl:'过来'},{id:'b21_e',ans:'시작|예측/평가',lbl:'起来'}]},
+  {id:'b22',sec:'10강',label:'복합방향보어 — 목적어 위치 규칙',
+   tpl:'일반명사 → 복합방향보어 <b data-id="b22_a">(a)</b>나 뒤 모두 가능. 처소사 → <b data-id="b22_b">(b)</b>에만. 이합동사 → <b data-id="b22_c">(c)</b>에만.',
+   blanks:[{id:'b22_a',ans:'사이',lbl:'(a) 일반명사'},{id:'b22_b',ans:'사이',lbl:'(b) 처소사'},{id:'b22_c',ans:'사이',lbl:'(c) 이합동사'}]},
+  {id:'b23',sec:'10강',label:'개사구보어 종류',
+   tpl:'到→<b data-id="b23_a">(a)</b>. 在→<b data-id="b23_b">(b)</b>. 自→기점·출처. 往→<b data-id="b23_c">(c)</b>. 给→대상. 于→비교·<b data-id="b23_d">(d)</b>.',
+   blanks:[{id:'b23_a',ans:'시간',lbl:'到'},{id:'b23_b',ans:'처소',lbl:'在'},{id:'b23_c',ans:'방향',lbl:'往'},{id:'b23_d',ans:'원인',lbl:'于→원인'}]},
+  {id:'b24',sec:'11강',label:'연동문 어법특징',
+   tpl:'연동문의 주어는 <b data-id="b24_a">(a)</b>만 있다. 술어 사이에 <b data-id="b24_b">(b)</b>를 쓸 수 없다. 동태조사 了는 첫 번째 동사나 마지막 동사 모두에 붙을 수 있다.',
+   blanks:[{id:'b24_a',ans:'하나',lbl:'(a) 주어 수'},{id:'b24_b',ans:'쉼표',lbl:'(b) 금지사항'}]},
+  {id:'b25',sec:'11강',label:'겸어문 V1 유형 3가지',
+   tpl:'①사역·요구·명령(让·使·叫·请). ②<b data-id="b25_a">(a)</b>(희망·감사 등). ③<b data-id="b25_b">(b)</b>·인정(称·叫).',
+   blanks:[{id:'b25_a',ans:'심리상태|심리',lbl:'(a) ②유형'},{id:'b25_b',ans:'호칭',lbl:'(b) ③유형'}]},
+  {id:'b26',sec:'11강',label:'겸어문 분석 + 이중목적어문',
+   tpl:'我让他去图书馆学习: 让의 주체 → <b data-id="b26_a">(a)</b>. 去의 시사 → <b data-id="b26_b">(b)</b>. 이중목적어문: 동사+<b data-id="b26_c">(c)</b>+<b data-id="b26_d">(d)</b>.',
+   blanks:[{id:'b26_a',ans:'我',lbl:'(a) 让 주체'},{id:'b26_b',ans:'他',lbl:'(b) 去 시사'},{id:'b26_c',ans:'간접목적어',lbl:'(c)'},{id:'b26_d',ans:'직접목적어',lbl:'(d)'}]},
+  {id:'b27',sec:'12강',label:'존현문 구조 및 부정',
+   tpl:'존재문: <b data-id="b27_a">(a)</b>+동사(有/是)+명사. 부정: 일반적으로 술어동사 <b data-id="b27_b">(b)</b>에 没 사용.',
+   blanks:[{id:'b27_a',ans:'처소사',lbl:'(a) 주어'},{id:'b27_b',ans:'앞',lbl:'(b) 没 위치'}]},
+  {id:'b28',sec:'12강',label:'존현문 빈어의 특성',
+   tpl:'존현문 빈어는 반드시 <b data-id="b28_a">(a)</b>는 아니며, <b data-id="b28_b">(b)</b>(불특정)한 명사가 온다.',
+   blanks:[{id:'b28_a',ans:'수사(受事)',lbl:'(a) 의미역'},{id:'b28_b',ans:'불정|不定',lbl:'(b) 특성'}]},
+  {id:'b29',sec:'13강',label:'把구문 동사 뒤 부가성분',
+   tpl:'결과보어·방향보어·상태보어·개사구보어·<b data-id="b29_a">(a)</b>·동량보어·시량보어·동사 중첩·동사 목적어·<b data-id="b29_b">(b)</b>·동사 앞 수사/부사.',
+   blanks:[{id:'b29_a',ans:'정도보어',lbl:'(a)'},{id:'b29_b',ans:'了，着，过|了착과',lbl:'(b) 동태조사'}]},
+  {id:'b30',sec:'13강',label:'把구문 부정부사 위치',
+   tpl:'부정부사(不·没·别)는 把 <b data-id="b30_a">(a)</b>에 온다. 어순: 주어 + <b data-id="b30_b">(b)</b> + 把 + 목적어 + 동사 + 기타성분.',
+   blanks:[{id:'b30_a',ans:'앞',lbl:'(a) 위치'},{id:'b30_b',ans:'부정부사',lbl:'(b)'}]},
+  {id:'b31',sec:'13강',label:'피동 표지 被·叫·让·给 비교',
+   tpl:'叫·让 → 被로 바꿀 수 <b data-id="b31_a">(a)</b>. 반대는 <b data-id="b31_b">(b)</b>. 让·给는 행위자 생략 <b data-id="b31_c">(c)</b>. 给는 <b data-id="b31_d">(d)</b>체에서 주로 쓰임.',
+   blanks:[{id:'b31_a',ans:'있다',lbl:'(a)'},{id:'b31_b',ans:'불가|안 된다',lbl:'(b)'},{id:'b31_c',ans:'불가',lbl:'(c)'},{id:'b31_d',ans:'구어',lbl:'(d)'}]},
+];
+
+const ESSAYS=[
+  {id:'e1',sec:'7강',label:'단어의 어휘적 정의를 완정·정형·최소 개념을 포함하여 설명하라.',
+   model:'어휘적 정의: "어음과 의미가 결합한 완정(完整)하고 정형(定型)적인 최소(最小)의 언어 건축 재료." ①완정: 독립적으로 이해 가능하며 이형태를 하나로 통합. ②정형: 고정된 음성형식과 의미가 있어 임의로 바꿀 수 없음. ③최소: 더 이상 완정·정형적인 단위로 나눌 수 없음. 완정으로 구성 성분과 구별, 정형으로 자유구와 구별, 최소로 고정구와 구별한다.'},
+  {id:'e2',sec:'7강',label:'형태소를 운용적 측면(자립 능력)에 따라 3가지로 분류하고 예를 들어 설명하라.',
+   model:'①자립형태소(성사형태소): 홀로 낱말을 이루는 형태소. 예) 人, 山, 水 — 단독으로 문장에서 사용 가능. ②반자립형태소(어근형태소): 단독으로 단어 자격 없으나 결합 시 위치이동이 비교적 자유. 예) 语(语调/汉语). ③의존형태소(비자립형태소): 반드시 특정 위치에서 다른 형태소와 결합해야 하는 형태소. 예) 了, 第, 完.'},
+  {id:'e3',sec:'8강',label:'구사법(构词法)과 구형법(构形法)을 비교하여 설명하라.',
+   model:'구사법: 형태소로부터 단어를 구성하는 법칙. 단어 내부구조에서 형태소의 결합 방식을 설명하며 단일어·합성어 등을 다룸. 구형법: 단어의 형태변화(굴절)법. 성·수·격·시제·상 등 문법관계를 나타내기 위해 단어 형태가 변하는 것. 중국어는 了·们 첨가 및 중첩(漂漂亮亮)으로 구형법에 해당하는 기능을 수행하나 단어 밖으로 확장되는 특징이 있음.'},
+  {id:'e4',sec:'8강',label:'복합어 내부구조 7가지를 예시와 함께 설명하라.',
+   model:'①병렬식(연합식): 구성 성분 간 동등 관계. 동의(休息), 대칭(是非), 평행(安全). ②평정식(수식): 수식어+피수식어. 예) 草帽, 笔试. ③술보식(후보식): 동사+보충성분. 예) 看见, 打倒. ④주술식: 주술관계. ⑤동목식: 동사+목적어. 예) 关心, 入迷. ⑥중첩식: 동일 형태소 중첩. 예) 爸爸. ⑦축합식: 생략(南开→南开大学), 축약(北大→北京大学), 총괄(三军=海·陆·空军), 간대(沪=上海).'},
+  {id:'e5',sec:'9강',label:'중국어에서 품사 분류가 어려운 두 가지 이유를 설명하라.',
+   model:'①중국어에는 인도유럽어와 달리 단어의 형태변화(굴절)와 어형변화가 없기 때문에 형태적 기준으로 품사를 구별하기 어렵다. ②품사와 문장성분 사이의 대응관계가 一对多이기 때문이다. 인도유럽어는 품사:문장성분이 1:1 대응이지만, 중국어에서 명사는 주어·목적어·관형어·술어·부사어 등 다양한 문장성분을 담당할 수 있어 품사 판별이 어렵다.'},
+  {id:'e6',sec:'9강',label:'겸류(兼类)의 개념과 성립 조건, 그리고 겸류가 아닌 경우를 설명하라.',
+   model:'겸류: 동일한 단어가 2개 이상의 품사를 겸하는 현상. 성립 조건 → 자형, 어음, 의미가 밀접(동일)해야 한다. 예) 麻烦: ①很麻烦(형용사) ②麻烦别人(동사) ③带来麻烦(명사). 겸류가 아닌 것: 서로 아무런 관계 없이 학자들이 동일하게 지칭하는 경우. 즉 음은 같으나 의미·기원이 전혀 다른 동음이의어는 겸류로 보지 않는다.'},
+  {id:'e7',sec:'10강',label:'谓语와 述语의 차이를 층차 분석법에 근거하여 설명하라.',
+   model:'谓語와 述語는 같은 층위의 개념이 아니다. 층차 분석법에 따르면 먼저 문장을 主語와 谓語로 분석한다. 주어는 진술 대상, 谓語는 주어에 대한 진술 전체다. 그 다음 谓語 내부를 다시 述語와 宾語로 분석한다. 述語는 동작을 나타내고 宾語는 동작이 관련된 대상이다. 따라서 谓語는 述語를 포함하는 상위 개념이며, 谓語는 주어를, 述語는 보어·빈어를 전제로 한다.'},
+  {id:'e8',sec:'10강',label:'시량보어와 동량보어에서 목적어 종류에 따른 위치 관계를 설명하라.',
+   model:'[시량보어] 일반명사: 주어+동사+시량보어+(的)+목적어. 인칭대사: 주어+동사+목적어+시량보어. 인명/지명: 주어+동사+시량보어+(的)+목적어. [동량보어] 일반 사물: 주어+동사+동량보어+목적어. 인칭대사: 주어+동사+목적어+동량보어. 인명/지명: 주어+(목적어)+동량사+(목적어) 모두 가능.'},
+  {id:'e9',sec:'10강',label:'방향보어 확장의미를 上·下·出·过来·起来를 중심으로 설명하라.',
+   model:'방향보어 확장의미는 유추가 안 되며 하나만 있지 않다. 上: 목표달성(考上大学), 접촉부착, 시작지속, 첨가. 下: 분리, 남겨짐, 동→정, 수용. 出: 인식(발견), 무→유. 过来: 비정상→정상(改过来). 起来: 시작(说起来), 예측/평가, 분산→집중, 떠오름.'},
+  {id:'e10',sec:'10강',label:'복합방향보어에서 목적어 종류에 따른 위치 규칙을 예시와 함께 설명하라.',
+   model:'①일반명사: 복합방향보어 사이나 뒤 모두 가능. 예) 前面走进一个人来(O), 走进来一个人(O). ②처소사: 복합방향보어 사이에만. 예) 走下楼来(O), 走下来楼(X). ③이합동사의 목적어: 복합방향보어 사이에만. 예) 他说起话来很有幽默(O), 他说话起来(X).'},
+  {id:'e11',sec:'11강',label:'연동문과 겸어문을 형식·의미 측면에서 비교하라.',
+   model:'공통점: 형식이 NP1+VP1+NP2+VP2로 동일. 차이점 — 연동문: NP1(대주어)이 VP1·VP2 모두의 행위자이며, 동작 간 시간 순서가 존재. 겸어문: NP2가 VP1의 목적어이면서 VP2의 주어를 겸함(겸어). VP1 동사는 사역/심리상태/호칭 등의 유형. 예) 我去图书馆学习(연동) vs 我让他去图书馆学习(겸어: 他가 让의 목적어+去의 주어).'},
+  {id:'e12',sec:'11강',label:'겸어문, 이중목적어문, 주술술어문의 차이를 설명하라.',
+   model:'겸어문: NP2가 V1의 목적어이자 V2의 주어. 예) 他让我转告你. 이중목적어문: 동사가 간접목적어+직접목적어 2개를 취함. 예) 他给我三块钱. 주술술어문: 大主語-小主語 간 의미관계(시사·수사·시간·장소·도구·영속 등). 예) 他身体很好(他=大주어). 서방 학계에서는 주술술어문을 Topic과 Comment로 설명한다.'},
+  {id:'e13',sec:'12강',label:'존현문의 구조, 의미, 부정 형식을 설명하라.',
+   model:'존현문은 어떤 처소에 사물이 존재하거나 나타나거나 사라짐을 나타낸다. 구조: 처소사어(시간사어)+동사+명사. 존재문은 有·是, 은현문은 来·去·出 등의 동사 사용. 빈어는 불특정 명사이며 반드시 수사(受事)는 아니다. 부정: 일반적으로 술어동사 앞에 没를 쓰고, 가설·불허·계획되지 않음을 나타낼 때만 不를 사용한다.'},
+  {id:'e14',sec:'13강',label:'把자문에서 동사 뒤에 반드시 부가성분이 있어야 하는 이유와 그 종류를 설명하라.',
+   model:'把구문은 \'처치(处置)\'와 \'致使\'의 의미를 가지므로 동작의 결과나 영향이 목적어에 미침을 반드시 나타내야 한다. 따라서 동사만 단독으로 올 수 없고 부가성분이 필수적이다. 종류: 결과보어, 방향보어, 상태보어(정태보어), 개사구보어, 정도보어, 동량보어, 시량보어, 동사 중첩, 동사의 목적어, 了·着·过, 동사 앞 수사/부사/개사구 등.'},
+  {id:'e15',sec:'13강',label:'被자문 외 피동 표지(叫·让·给)의 용법상 차이를 설명하라.',
+   model:'叫·让: 被로 바꿀 수 있으나 반대(被→叫·让)는 불가. 행위자 없이 바로 동사 앞에 올 수 없음. 给: 구어체적 표현, 피동을 강조. 让·给는 동작 행위자를 생략할 수 없다. 叫·让·给 모두 화자가 원하지 않는 상황이 발생했음을 나타낼 때 주로 쓰인다. 예) 书给拿走了(O), 书被拿走了(O).'},
+  {id:'e16',sec:'13강',label:'下课以后我要回去家拿些东西가 비규범적인 이유를 설명하고 바르게 고쳐라.',
+   model:'비규범적 이유: 回去는 복합방향보어인데, 목적어 家가 처소사이므로 복합방향보어 사이에만 위치해야 한다(回去家 X). 수정: 下课以后我要回家去拿些东西. 또는 단순방향보어 사용: 下课以后我要回家拿些东西.'},
+];
+
+const wrongMap={};
+let curTab='blank';
+let curFilter='all';
+
+function norm(s){ return s.trim().toLowerCase().replace(/\s+/g,' '); }
+
+function buildBlankTpl(tpl, blanks){
+  let result = tpl;
+  blanks.forEach(b=>{
+    const re = new RegExp('<b data-id="'+b.id+'">[^<]*<\\/b>');
+    result = result.replace(re,
+      '<span class="blank-wrap"><input id="'+b.id+'" data-ans="'+b.ans+'" data-lbl="'+b.lbl+'" placeholder="'+b.lbl+'"></span>'
+    );
+  });
+  return result;
+}
+
+function renderBlanks(){
+  const container = document.getElementById('page-blank');
+  container.innerHTML = '';
+  const bySec = {};
+  BLANKS.forEach(q=>{ if(!bySec[q.sec]) bySec[q.sec]=[]; bySec[q.sec].push(q); });
+  const secNames = {'7강':'단어와 형태소','8강':'구사법과 구형법','9강':'품사 분류 기준',
+    '10강':'문장성분','11강':'연동문과 겸어문','12강':'존현문','13강':'把·被구문'};
+  Object.keys(bySec).forEach(sec=>{
+    const sl = document.createElement('div');
+    sl.className='section-label'; sl.setAttribute('data-sec',sec);
+    sl.textContent = sec + (secNames[sec]?' · '+secNames[sec]:'');
+    container.appendChild(sl);
+    bySec[sec].forEach(q=>{
+      const card = document.createElement('div');
+      card.className='qcard'; card.id='card-'+q.id; card.setAttribute('data-sec',q.sec);
+      card.innerHTML=
+        '<div class="qmeta"><span class="qnum">'+q.id+'</span><span class="badge badge-blank">빈칸형</span></div>'+
+        '<div class="q-label">'+q.label+'</div>'+
+        '<div class="qtext">'+buildBlankTpl(q.tpl,q.blanks)+'</div>'+
+        '<div class="ans-box" id="ans-'+q.id+'"></div>'+
+        '<div class="bottom-row">'+
+        '<button class="btn-check" onclick="checkBlank(\''+q.id+'\')">채점</button>'+
+        '<span class="fb" id="fb-'+q.id+'"></span></div>';
+      container.appendChild(card);
+    });
+  });
+  updateTotal();
+}
+
+function renderEssays(){
+  const container = document.getElementById('page-essay');
+  container.innerHTML = '';
+  const bySec = {};
+  ESSAYS.forEach(q=>{ if(!bySec[q.sec]) bySec[q.sec]=[]; bySec[q.sec].push(q); });
+  Object.keys(bySec).forEach(sec=>{
+    const sl = document.createElement('div');
+    sl.className='section-label'; sl.setAttribute('data-sec',sec);
+    sl.textContent = sec;
+    container.appendChild(sl);
+    bySec[sec].forEach(q=>{
+      const card = document.createElement('div');
+      card.className='qcard'; card.id='ecard-'+q.id; card.setAttribute('data-sec',q.sec);
+      card.innerHTML=
+        '<div class="qmeta"><span class="qnum">'+q.id+'</span><span class="badge badge-essay">서술형</span></div>'+
+        '<div class="qtext" style="font-weight:500;margin-bottom:10px">'+q.label+'</div>'+
+        '<textarea class="essay-area" id="ea-'+q.id+'" placeholder="여기에 답안을 작성하세요..."></textarea>'+
+        '<div class="essay-ans-box" id="eans-'+q.id+'"><strong>모범 답안</strong>'+q.model+'</div>'+
+        '<div class="bottom-row"><button class="btn-check" onclick="toggleEssayAns(\''+q.id+'\')">정답 보기 / 닫기</button></div>';
+      container.appendChild(card);
+    });
+  });
+}
+
+function checkBlank(qid){
+  const q = BLANKS.find(x=>x.id===qid);
+  if(!q) return;
+  let ok=0;
+  q.blanks.forEach(b=>{
+    const el=document.getElementById(b.id); if(!el) return;
+    const alts=b.ans.split('|');
+    const val=norm(el.value);
+    const correct=alts.some(a=>val===norm(a));
+    el.className=correct?'ok':'ng';
+    if(correct){ ok++; delete wrongMap[qid+'_'+b.lbl]; }
+    else wrongMap[qid+'_'+b.lbl]={qid,label:q.label,lbl:b.lbl,canon:b.ans.split('|')[0],userVal:el.value};
+  });
+  const total=q.blanks.length;
+  const allOk=ok===total;
+  const card=document.getElementById('card-'+qid);
+  card.classList.toggle('correct',allOk); card.classList.toggle('wrong',!allOk);
+  const fb=document.getElementById('fb-'+qid);
+  fb.textContent=ok+'/'+total+' 정답'; fb.className='fb '+(allOk?'ok':'ng');
+  const ansEl=document.getElementById('ans-'+qid);
+  ansEl.innerHTML='정답: '+q.blanks.map(b=>'<span style="margin-right:10px"><span style="opacity:.65">'+b.lbl+'</span> → '+b.ans.split('|')[0]+'</span>').join('');
+  ansEl.classList.add('show');
+  renderWN(); updateScore();
+}
+
+function toggleEssayAns(qid){
+  document.getElementById('eans-'+qid).classList.toggle('show');
+}
+
+function checkAllVisible(){
+  BLANKS.forEach(q=>{
+    const card=document.getElementById('card-'+q.id);
+    if(card && !card.classList.contains('hidden') && card.style.display!=='none') checkBlank(q.id);
+  });
+}
+
+function showAllAns(){
+  if(curTab==='blank') BLANKS.forEach(q=>{ const el=document.getElementById('ans-'+q.id); if(el) el.classList.add('show'); });
+  else if(curTab==='essay') ESSAYS.forEach(q=>{ const el=document.getElementById('eans-'+q.id); if(el) el.classList.add('show'); });
+}
+
+function resetVisible(){
+  BLANKS.forEach(q=>{
+    q.blanks.forEach(b=>{ const el=document.getElementById(b.id); if(el){el.value='';el.className='';} });
+    const card=document.getElementById('card-'+q.id);
+    if(card){ card.classList.remove('correct','wrong'); }
+    const fb=document.getElementById('fb-'+q.id); if(fb){fb.textContent='';fb.className='fb';}
+    const ans=document.getElementById('ans-'+q.id); if(ans){ans.classList.remove('show');ans.innerHTML='';}
+  });
+  ESSAYS.forEach(q=>{
+    const ta=document.getElementById('ea-'+q.id); if(ta) ta.value='';
+    const ans=document.getElementById('eans-'+q.id); if(ans) ans.classList.remove('show');
+  });
+  Object.keys(wrongMap).forEach(k=>delete wrongMap[k]);
+  renderWN(); updateScore();
+}
+
+function switchTab(tab, btn){
+  curTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('page-blank').classList.toggle('hidden', tab!=='blank');
+  document.getElementById('page-essay').classList.toggle('hidden', tab!=='essay');
+  document.getElementById('page-wrong').classList.toggle('hidden', tab!=='wrong');
+  document.getElementById('filter-row').classList.toggle('hidden', tab==='wrong');
+  document.getElementById('btn-all').classList.toggle('hidden', tab!=='blank');
+}
+
+function filterSection(sec, btn){
+  curFilter=sec;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  ['#page-blank .qcard','#page-blank .section-label','#page-essay .qcard','#page-essay .section-label'].forEach(sel=>{
+    document.querySelectorAll(sel).forEach(el=>{
+      el.style.display=(sec==='all'||el.getAttribute('data-sec')===sec)?'':'none';
+    });
+  });
+}
+
+function renderWN(){
+  const body=document.getElementById('wn-body');
+  const cnt=document.getElementById('wn-cnt');
+  const keys=Object.keys(wrongMap);
+  cnt.textContent=keys.length;
+  document.getElementById('sc-wn').textContent=keys.length;
+  if(!keys.length){ body.innerHTML='<div class="empty">오답이 없어요.</div>'; return; }
+  body.innerHTML=keys.map(k=>{
+    const w=wrongMap[k];
+    return '<div class="wn-item"><div class="wn-q">'+w.label+' &nbsp;|&nbsp; '+w.lbl+'</div>'+
+      '<div class="wn-row">'+
+      (w.userVal?'<span class="wn-wrong">✗ '+w.userVal+'</span>':'<span style="color:var(--text-3);font-size:12px">미입력</span>')+
+      '<span class="wn-right">✓ '+w.canon+'</span></div></div>';
+  }).join('');
+}
+
+function clearWN(){ Object.keys(wrongMap).forEach(k=>delete wrongMap[k]); renderWN(); }
+
+function updateScore(){
+  let ok=0, ng=0;
+  document.querySelectorAll('input[data-ans]').forEach(el=>{
+    if(el.className==='ok') ok++;
+    else if(el.className==='ng') ng++;
+  });
+  document.getElementById('sc-ok').textContent=ok;
+  document.getElementById('sc-ng').textContent=ng;
+}
+
+function updateTotal(){
+  let total=0;
+  BLANKS.forEach(q=>total+=q.blanks.length);
+  document.getElementById('sc-tot').textContent=total;
+}
+
+renderBlanks();
+renderEssays();
+renderWN();
+</script>
+</body>
+</html>
